@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Segurança Digital Prática - Guia para a Melhor Idade</title>
+  <style>
+    /* ==========================================================================
+       1. VARIÁVEIS CSS & ACESSIBILIDADE DE FONTE (Pura CSS)
+       ========================================================================== */
+    :root {
+      /* Paleta de Cores de Alto Contraste e Confortável */
+      --primary: #1e3a8a;       /* Azul Escuro Confiável */
+      --primary-light: #eff6ff; /* Azul bem suave para fundos */
+      --text-dark: #1f2937;     /* Cinza quase preto para textos */
+      --text-muted: #4b5563;    /* Cinza médio legível */
+      --bg-main: #fcfbf7;       /* Off-white quente, confortável para leitura */
+      --bg-card: #ffffff;       /* Branco puro para destacar os cards */
+      --success: #065f46;       /* Verde escuro para acertos/segurança */
+      --success-light: #ecfdf5; /* Fundo verde suave */
+      --warning: #92400e;       /* Âmbar escuro para alertas */
+      --warning-light: #fffbeb; /* Fundo amarelo suave */
+      --border: #d1d5db;        /* Borda cinza suave */
+      
+      /* Escala de fonte base - modificada via botões de acessibilidade */
+      --font-scale: 1rem;       /* 16px por padrão */
+    }
+
+    /* Redefinições básicas de acessibilidade */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* ==========================================================================
+       2. CONTROLE DE TAMANHO DE FONTE (CSS Hack usando Radio Buttons)
+       ========================================================================== */
+    /* Esconde os inputs de rádio utilitários de acessibilidade */
+    .font-toggle-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Define os tamanhos de fonte base escaláveis baseados no rádio ativo */
+    #font-normal:checked ~ * { --font-scale: 1.1rem; }      /* ~17.6px (já inicia grande) */
+    #font-large:checked ~ * { --font-scale: 1.35rem; }     /* ~21.6px */
+    #font-xlarge:checked ~ * { --font-scale: 1.6rem; }     /* ~25.6px */
+
+    /* Estilização da barra de acessibilidade fixa no topo */
+    .accessibility-bar {
+      background-color: #111827;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .accessibility-title {
+      font-size: calc(var(--font-scale) * 0.85);
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .font-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .font-btn {
+      background-color: #374151;
+      color: white;
+      border: 2px solid #4b5563;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: calc(var(--font-scale) * 0.8);
+      font-weight: bold;
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .font-btn:hover {
+      background-color: #4b5563;
+      border-color: #9ca3af;
+    }
+
+    /* Destacar visualmente qual botão de acessibilidade está ativo */
+    #font-normal:checked ~ .accessibility-bar label[for="font-normal"],
+    #font-large:checked ~ .accessibility-bar label[for="font-large"],
+    #font-xlarge:checked ~ .accessibility-bar label[for="font-xlarge"] {
+      background-color: var(--primary);
+      border-color: #60a5fa;
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+    }
+
+    /* Forçar foco visível para navegação por teclado */
+    button:focus, a:focus, label:focus-within, summary:focus {
+      outline: 4px solid #3b82f6 !important;
+      outline-offset: 3px;
+    }
+
+    /* ==========================================================================
+       3. ESTRUTURA GERAL & CABEÇALHO
+       ========================================================================== */
+    .header-banner {
+      background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .header-banner h1 {
+      font-size: calc(var(--font-scale) * 1.8);
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .header-banner p {
+      font-size: calc(var(--font-scale) * 1.1);
+      max-width: 700px;
+      margin: 0 auto;
+      color: #93c5fd;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* ==========================================================================
+       4. SISTEMA DE NAVEGAÇÃO POR ABAS (CSS Puro usando Radio Buttons)
+       ========================================================================== */
+    .tab-system {
+      margin-top: -20px;
+      margin-bottom: 30px;
+    }
+
+    /* Esconde os rádios das abas */
+    .tab-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Container das abas (botões grandes e acessíveis) */
+    .tab-menu {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: white;
+      padding: 8px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+    }
+
+    .tab-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 8px;
+      background-color: var(--bg-card);
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: bold;
+      font-size: calc(var(--font-scale) * 0.95);
+      color: var(--primary);
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      min-height: 85px;
+    }
+
+    .tab-label svg {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 6px;
+      fill: currentColor;
+    }
+
+    .tab-label:hover {
+      background-color: var(--primary-light);
+    }
+
+    /* Estilo da Aba Ativa */
+    #tab-home-input:checked ~ .tab-system .tab-menu label[for="tab-home-input"],
+    #tab-tips-input:checked ~ .tab-system .tab-menu label[for="tab-tips-input"],
+    #tab-quiz-input:checked ~ .tab-system .tab-menu label[for="tab-quiz-input"],
+    #tab-help-input:checked ~ .tab-system .tab-menu label[for="tab-help-input"] {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Controle de exibição das seções baseado na aba selecionada */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    #tab-home-input:checked ~ #content-home,
+    #tab-tips-input:checked ~ #content-tips,
+    #tab-quiz-input:checked ~ #content-quiz,
+    #tab-help-input:checked ~ #content-help {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsividade para telas menores (celular) */
+    @media (max-width: 600px) {
+      .tab-menu {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .tab-label {
+        min-height: auto;
+        padding: 12px 6px;
+      }
+      .accessibility-bar {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    /* ==========================================================================
+       5. DESIGN DOS CARDS E CONTEÚDO COMUM
+       ========================================================================== */
+    .card {
+      background-color: var(--bg-card);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: calc(var(--font-scale) * 1.3);
+      color: var(--primary);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 10px;
+    }
+
+    .card-title svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+    }
+
+    h2 {
+      font-size: calc(var(--font-scale) * 1.4);
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: calc(var(--font-scale) * 1.05);
+      margin-bottom: 15px;
+      color: var(--text-dark);
+    }
+
+    ul, ol {
+      margin-left: 25px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      font-size: calc(var(--font-scale) * 1.05);
+      margin-bottom: 10px;
+    }
+
+    strong {
+      color: var(--primary);
+    }
+
+    /* ==========================================================================
+       6. CONTEÚDO DA ABA INICIAL (HOME)
+       ========================================================================== */
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .welcome-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .highlight-box {
+      background-color: var(--primary-light);
+      border-left: 6px solid var(--primary);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .welcome-badge {
+      display: inline-block;
+      background-color: #dbeafe;
+      color: #1e40af;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: calc(var(--font-scale) * 0.8);
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    /* ==========================================================================
+       7. ACORDEÕES DE DICAS (Nativos com HTML5 details/summary)
+       ========================================================================== */
+    details {
+      background-color: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 15px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    details[open] {
+      border-color: var(--primary);
+    }
+
+    summary {
+      padding: 18px 20px;
+      font-size: calc(var(--font-scale) * 1.1);
+      font-weight: bold;
+      color: var(--primary);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none; /* Esconde a seta padrão */
+    }
+
+    /* Esconde a seta nativa em navegadores Safari */
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    /* Adiciona um ícone customizado de "+" e "-" para o acordeão */
+    summary::after {
+      content: '+';
+      font-size: calc(var(--font-scale) * 1.4);
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    details[open] summary::after {
+      content: '−';
+    }
+
+    summary:hover {
+      background-color: var(--primary-light);
+    }
+
+    .details-content {
+      padding: 20px;
+      border-top: 1px solid var(--border);
+      background-color: #fafbfd;
+    }
+
+    .tip-alert {
+      background-color: var(--warning-light);
+      border: 2px solid var(--warning);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      color: var(--warning);
+    }
+
+    .tip-alert strong {
+      color: var(--warning);
+    }
+
+    /* ==========================================================================
+       8. SEÇÃO DO QUIZ INTERATIVO (CSS Puro)
+       ========================================================================== */
+    .quiz-card {
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .quiz-question {
+      font-size: calc(var(--font-scale) * 1.15);
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    /* Estilização das opções do quiz (labels gigantes para fácil toque) */
+    .quiz-option {
+      display: block;
+      position: relative;
+      background-color: var(--bg-main);
+      border: 2px solid var(--border);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: calc(var(--font-scale) * 1.05);
+      transition: all 0.2s ease;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+
+    .quiz-option input[type="radio"] {
+      margin-right: 12px;
+      transform: scale(1.3);
+      vertical-align: middle;
+    }
+
+    /* Feedbacks de acerto/erro escondidos por padrão */
+    .feedback-correct, .feedback-incorrect {
+      display: none;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: calc(var(--font-scale) * 1.05);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-correct {
+      background-color: var(--success-light);
+      color: var(--success);
+      border: 2px dashed var(--success);
+    }
+
+    .feedback-incorrect {
+      background-color: var(--warning-light);
+      color: var(--warning);
+      border: 2px dashed var(--warning);
+    }
+
+    /* Mostrar feedbacks corretos/incorretos dependendo da seleção usando o seletor irmão CSS (~) */
+    /* Resposta Correta Selecionada */
+    .correct-radio:checked ~ .feedback-correct {
+      display: block;
+    }
+    
+    /* Resposta Incorreta Selecionada */
+    .incorrect-radio:checked ~ .feedback-incorrect {
+      display: block;
+    }
+
+    /* Estilo visual da borda da opção selecionada */
+    .quiz-option:has(.correct-radio:checked) {
+      border-color: var(--success);
+      background-color: var(--success-light);
+    }
+
+    .quiz-option:has(.incorrect-radio:checked) {
+      border-color: var(--warning);
+      background-color: var(--warning-light);
+    }
+
+    /* ==========================================================================
+       9. SEÇÃO DE AJUDA E TELEFONES ÚTEIS
+       ========================================================================== */
+    .emergency-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    @media (max-width: 600px) {
+      .emergency-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .emergency-card {
+      background-color: #fff1f2;
+      border: 2px solid #f43f5e;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .emergency-card h3 {
+      font-size: calc(var(--font-scale) * 1.2);
+      color: #9f1239;
+      margin-bottom: 8px;
+    }
+
+    .emergency-phone {
+      display: inline-block;
+      font-size: calc(var(--font-scale) * 1.6);
+      font-weight: bold;
+      color: #e11d48;
+      text-decoration: none;
+      background-color: white;
+      padding: 8px 20px;
+      border-radius: 9999px;
+      border: 2px solid #fda4af;
+      margin-top: 10px;
+    }
+
+    .emergency-phone:hover {
+      background-color: #ffe4e6;
+    }
+
+    /* Rodapé Informativo */
+    footer {
+      text-align: center;
+      padding: 30px;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: calc(var(--font-scale) * 0.9);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       ACESSIBILIDADE: Tamanho da Fonte Controlado por Botões Nativos
+       ========================================================================== -->
+  <input type="radio" name="font-size" id="font-normal" class="font-toggle-input" checked>
+  <input type="radio" name="font-size" id="font-large" class="font-toggle-input">
+  <input type="radio" name="font-size" id="font-xlarge" class="font-toggle-input">
+
+  <!-- Barra Fixa de Ferramentas de Acessibilidade -->
+  <div class="accessibility-bar">
+    <div class="accessibility-title">
+      <!-- Ícone de Acessibilidade -->
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" style="vertical-align: middle;">
+        <path d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm1 5.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5.67 1.5 1.5 1.5 1.5-.67 1.5-1.5zm-1.5 3c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h.5v3.5c0 .28.22.5.5.5s.5-.22.5-.5V17h.5c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1h-1.5z"/>
+      </svg>
+      Acessibilidade: Ajustar Tamanho da Letra
+    </div>
+    <div class="font-controls">
+      <label for="font-normal" class="font-btn" tabindex="0" role="button">Letra Normal (A)</label>
+      <label for="font-large" class="font-btn" tabindex="0" role="button">Letra Grande (A+)</label>
+      <label for="font-xlarge" class="font-btn" tabindex="0" role="button">Letra Muito Grande (A++)</label>
+    </div>
+  </div>
+
+  <!-- Cabeçalho Principal -->
+  <header class="header-banner">
+    <div class="container">
+      <h1>Segurança Digital Descomplicada</h1>
+      <p>Aprenda a usar a internet, celulares e redes sociais de forma segura e proteja-se contra golpes comuns de um jeito simples e direto.</p>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       SISTEMA DE NAVEGAÇÃO: Controlado por Abas Nativas (Radio Buttons)
+       ========================================================================== -->
+  <input type="radio" name="main-tabs" id="tab-home-input" class="tab-input" checked>
+  <input type="radio" name="main-tabs" id="tab-tips-input" class="tab-input">
+  <input type="radio" name="main-tabs" id="tab-quiz-input" class="tab-input">
+  <input type="radio" name="main-tabs" id="tab-help-input" class="tab-input">
+
+  <div class="container">
+    
+    <!-- Menu das Abas -->
+    <div class="tab-system">
+      <nav class="tab-menu" aria-label="Menu principal">
+        
+        <label for="tab-home-input" class="tab-label" tabindex="0" role="button">
+          <!-- Ícone Casa -->
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          Início
+        </label>
+        
+        <label for="tab-tips-input" class="tab-label" tabindex="0" role="button">
+          <!-- Ícone Dicas/Escudo -->
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 15h2v2h-2v-2zm0-8h2v6h-2V7z"/></svg>
+          Dicas Importantes
+        </label>
+        
+        <label for="tab-quiz-input" class="tab-label" tabindex="0" role="button">
+          <!-- Ícone Jogo/Troféu -->
+          <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.44 1.72 4.48 4 4.92V19h10v-4.08c2.28-.44 4-2.48 4-4.92V7c0-1.1-.9-2-2-2zM5 10V7h2v3H5zm14 0h-2V7h2v3z"/></svg>
+          Teste seu Conhecimento
+        </label>
+        
+        <label for="tab-help-input" class="tab-label" tabindex="0" role="button">
+          <!-- Ícone Ajuda Urgente -->
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          Ajuda Urgente
+        </label>
+
+      </nav>
+    </div>
+
+    <!-- ==========================================================================
+         CONTEÚDO DA ABA: INÍCIO
+         ========================================================================== -->
+    <main id="content-home" class="tab-content">
+      <div class="card">
+        <span class="welcome-badge">Boas-vindas!</span>
+        <h2 class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          Sua segurança é a nossa prioridade!
+        </h2>
+        <div class="welcome-grid">
+          <div>
+            <p>Seja muito bem-vindo ao nosso portal de <strong>Segurança Digital</strong>. Nosso objetivo é ajudar você a aproveitar a tecnologia e conversar com seus amigos e familiares sem medo de cair em golpes.</p>
+            <p>Hoje em dia, os golpistas usam mensagens falsas e ligações fingindo ser do seu banco ou de seus parentes para tentar tirar dinheiro. Mas não se preocupe! Com poucas precauções simples, você pode proteger seu celular, seu dinheiro e seus dados.</p>
+          </div>
+          <div class="highlight-box">
+            <h3>Como usar o site:</h3>
+            <ol>
+              <li>Use os botões cinzas no topo para aumentar a letra se precisar.</li>
+              <li>Navegue pelas abas acima para ler as dicas, fazer um teste rápido ou buscar telefones de ajuda.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+          Os 3 Mandamentos da Segurança Digital
+        </h2>
+        <p>Grave essas 3 regras simples na sua mente. Elas vão te salvar de quase todos os golpes na internet:</p>
+        
+        <ul style="list-style-type: none; margin-left: 0;">
+          <li class="highlight-box" style="border-left-color: #ef4444; background-color: #fef2f2; margin-bottom: 12px;">
+            <strong>1. O banco NUNCA liga pedindo senhas:</strong> Se alguém ligar dizendo que é do banco e pedir sua senha ou pedir para você fazer um PIX de teste para cancelar uma "compra suspeita", <strong>desligue imediatamente</strong>. É golpe!
+          </li>
+          <li class="highlight-box" style="border-left-color: #f59e0b; background-color: #fffbeb; margin-bottom: 12px;">
+            <strong>2. Desconfie de urgência:</strong> Golpistas adoram criar situações de pânico, como dizer que sua conta vai ser bloqueada hoje se você não clicar num link. Respire fundo, não tenha pressa. Nada de ruim vai acontecer se você parar para pensar.
+          </li>
+          <li class="highlight-box" style="border-left-color: #10b981; background-color: #f0fdf4; margin-bottom: 12px;">
+            <strong>3. Peça ajuda a um familiar de confiança:</strong> Se receber uma mensagem estranha ou uma proposta que parece boa demais, pare e pergunte para um filho, neto ou amigo antes de tomar qualquer decisão.
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <!-- ==========================================================================
+         CONTEÚDO DA ABA: DICAS DETALHADAS
+         ========================================================================== -->
+    <main id="content-tips" class="tab-content">
+      <div class="card">
+        <h2 class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 4.36 6 6.92 6 10v5l-2 2v1h16v-1l-2-2z"/></svg>
+          Dicas Práticas de Proteção
+        </h2>
+        <p>Clique em cada um dos títulos abaixo para abrir as explicações passo a passo sobre os assuntos importantes:</p>
+
+        <!-- Acordeão 1 -->
+        <details>
+          <summary>Como identificar mensagens falsas no WhatsApp ou SMS?</summary>
+          <div class="details-content">
+            <p>Os bandidos adoram mandar mensagens fingindo ser grandes lojas, bancos ou até mesmo operadoras de celular.</p>
+            <ul>
+              <li><strong>Preste atenção nos links:</strong> Nunca clique em links que contenham erros de digitação (ex: <i>www.banc0-brasil.com</i> em vez do site verdadeiro).</li>
+              <li><strong>Promessas milagrosas:</strong> Se a mensagem disser que você ganhou um sorteio do qual nunca participou, ou se oferecer dinheiro fácil, apague a mensagem.</li>
+              <li><strong>Número desconhecido fingindo ser parente:</strong> Se alguém te mandar mensagem dizendo: <i>"Mãe/Pai, mudei de número, anota aí"</i> e logo em seguida pedir dinheiro emprestado, ligue imediatamente para o número antigo do seu filho para confirmar se é verdade. Não faça nenhuma transferência antes de ouvir a voz do seu parente por telefone!</li>
+            </ul>
+            <div class="tip-alert">
+              <strong>⚠️ REGRA DE OURO:</strong> Nunca clique em links recebidos por mensagem antes de ligar para quem enviou e confirmar.
+            </div>
+          </div>
+        </details>
+
+        <!-- Acordeão 2 -->
+        <details>
+          <summary>Como criar senhas seguras e fáceis de lembrar?</summary>
+          <div class="details-content">
+            <p>Suas senhas são a chave da sua casa digital. Se elas forem fracas, fica fácil para criminosos descobrirem.</p>
+            <ul>
+              <li><strong>Evite o óbvio:</strong> Nunca use sua data de nascimento, o nome dos seus filhos ou sequências fáceis como <i>"123456"</i> ou <i>"senha12"</i>.</li>
+              <li><strong>Crie uma "Frase Secreta":</strong> Uma ótima dica é pensar em uma frase que só você conhece e usar as primeiras letras dela. Por exemplo: "O meu cachorro Rex comeu três biscoitos!" vira a senha segura: <b>OmcRctb!</b></li>
+              <li><strong>Não guarde no celular:</strong> Não anote suas senhas no bloco de notas do celular ou em papéis guardados na capinha do telefone. Se você perder o aparelho, os bandidos encontrarão tudo.</li>
+            </ul>
+            <div class="tip-alert">
+              <strong>💡 DICA PRÁTICA:</strong> Se precisar anotar suas senhas, anote em um caderno físico que fica guardado em um local seguro na sua casa.
+            </div>
+          </div>
+        </details>
+
+        <!-- Acordeão 3 -->
+        <details>
+          <summary>Segurança no PIX e nos Aplicativos de Banco</summary>
+          <div class="details-content">
+            <p>Os aplicativos de banco trouxeram muita facilidade, mas exigem atenção redobrada.</p>
+            <ul>
+              <li><strong>Limite de PIX à noite:</strong> Entre em seu aplicativo e configure o limite máximo para transferências no período da noite (das 20h às 6h) para um valor baixo. Assim, se você for roubado, o prejuízo será muito menor.</li>
+              <li><strong>Confirme o destinatário do PIX:</strong> Antes de digitar a senha e confirmar qualquer PIX, leia com muita calma o nome da pessoa ou empresa que vai receber o dinheiro na tela de confirmação. Se for um nome diferente de quem você está negociando, cancele na hora.</li>
+              <li><strong>O golpe do "Falso Funcionário do Banco":</strong> Criminosos ligam dizendo que notaram um "PIX suspeito" na sua conta e pedem para você fazer um "PIX reverso" ou de devolução para consertar o sistema. Isso é mentira! Bancos nunca pedem para você fazer transferências para resolver problemas.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- Acordeão 4 -->
+        <details>
+          <summary>Como comprar com segurança na Internet?</summary>
+          <div class="details-content">
+            <p>Fazer compras online é confortável, mas você precisa saber se a loja é de confiança.</p>
+            <ul>
+              <li><strong>Cadeado de Segurança:</strong> Olhe na barra de endereço onde você digita o nome do site. Deve haver o desenho de um pequeno <strong>cadeado fechado</strong> ali. Isso significa que a conexão é segura.</li>
+              <li><strong>Desconfie de preços excessivamente baixos:</strong> Uma televisão nova que custa R$ 3.000,00 sendo vendida por R$ 600,00 em um anúncio no Facebook quase certamente é um site falso que vai roubar seu dinheiro e não entregar nada.</li>
+              <li><strong>Prefira Boleto ou Cartão Virtual:</strong> Para compras na internet, evite usar o seu cartão de crédito físico de plástico. Muitos bancos têm o recurso de "Cartão Virtual" no aplicativo, que gera um número de cartão de uso único e temporário, muito mais seguro.</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </main>
+
+    <!-- ==========================================================================
+         CONTEÚDO DA ABA: QUIZ (CSS Puro com Radio Buttons e pseudo-classes)
+         ========================================================================== -->
+    <main id="content-quiz" class="tab-content">
+      <div class="card">
+        <h2 class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 16H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V6h2v2zm8 8h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V6h6v2z"/></svg>
+          Pratique o que aprendeu!
+        </h2>
+        <p>Abaixo estão situações reais do dia a dia. Selecione a opção que você acha correta para testar seus conhecimentos e receber uma explicação imediata.</p>
+      </div>
+
+      <!-- PERGUNTA 1 -->
+      <div class="quiz-card">
+        <div class="quiz-question">1. Você recebe uma mensagem no WhatsApp do seu filho pedindo uma transferência PIX urgente para pagar uma conta, usando um número de celular que você não conhece. O que você faz?</div>
+        
+        <!-- Opção A -->
+        <label class="quiz-option">
+          <input type="radio" name="pergunta1" class="incorrect-radio">
+          <span><strong>Opção A:</strong> Faz o PIX imediatamente para ajudar seu filho rápido, afinal ele parece estar com pressa.</span>
+          <div class="feedback-incorrect">
+            ❌ <strong>Incorreto!</strong> Golpistas usam a urgência para fazer você agir sem pensar. Nunca transfira dinheiro sem confirmar por ligação ou pessoalmente se a pessoa é realmente quem diz ser.
+          </div>
+        </label>
+
+        <!-- Opção B -->
+        <label class="quiz-option">
+          <input type="radio" name="pergunta1" class="correct-radio">
+          <span><strong>Opção B:</strong> Não transfere o dinheiro. Liga para o número antigo do seu filho para falar com ele ou faz uma chamada de vídeo para confirmar a identidade dele.</span>
+          <div class="feedback-correct">
+            🎉 <strong>Parabéns, resposta corretíssima!</strong> Sempre fale pessoalmente ou por voz usando o número antigo/oficial do seu familiar de confiança. Se a pessoa der desculpas para não atender a ligação ou chamada de vídeo, desconfie na hora!
+          </div>
+        </label>
+      </div>
+
+      <!-- PERGUNTA 2 -->
+      <div class="quiz-card">
+        <div class="quiz-question">2. O telefone toca. Uma gravação diz que é do seu banco e que sua conta bancária foi bloqueada por causa de uma compra suspeita de R$ 2.500,00. A gravação pede para você falar com um atendente urgente. O que fazer?</div>
+        
+        <!-- Opção A -->
+        <label class="quiz-option">
+          <input type="radio" name="pergunta2" class="correct-radio">
+          <span><strong>Opção A:</strong> Desliga o telefone imediatamente, sem falar nada. Depois, se ficar preocupado, pega um extrato ou liga para o telefone oficial do banco que está atrás do seu cartão físico.</span>
+          <div class="feedback-correct">
+            🎉 <strong>Excelente escolha!</strong> O banco de verdade nunca faz gravações pedindo para você confirmar transferências desse jeito e nunca pede para você transferir dinheiro para "cancelar" compras suspeitas. Desligar e ligar de volta no número atrás do cartão é a ação mais segura!
+          </div>
+        </label>
+
+        <!-- Opção B -->
+        <label class="quiz-option">
+          <input type="radio" name="pergunta2" class="incorrect-radio">
+          <span><strong>Opção B:</strong> Conversa com o atendente e segue as instruções dele para transferir o seu dinheiro para uma conta segura temporária ou informa sua senha para cancelar a compra suspeita.</span>
+          <div class="feedback-incorrect">
+            ❌ <strong>Perigo! Esta resposta está errada.</strong> Isso é o "Golpe da Falsa Central de Atendimento". Nenhum banco cria contas de segurança temporárias para transferências e nenhum atendente de verdade pode solicitar sua senha.
+          </div>
+        </label>
+      </div>
+
+      <!-- PERGUNTA 3 -->
+      <div class="quiz-card">
+        <div class="quiz-question">3. Onde você deve guardar as senhas de seus aplicativos de banco e redes sociais de forma mais segura?</div>
+        
+        <!-- Opção A -->
+        <label class="quiz-option">
+          <input type="radio" name="pergunta3" class="incorrect-radio">
+          <span><strong>Opção A:</strong> Em uma anotação salva no seu celular chamada "Minhas Senhas", ou escrito em um papelzinho dentro da capinha do celular.</span>
+          <div class="feedback-incorrect">
+            ❌ <strong>Não faça isso!</strong> Se o seu celular for perdido ou roubado, os criminosos terão acesso fácil a todas as suas contas, pois geralmente começam olhando a capinha do celular e o aplicativo de notas.
+          </div>
+        </label>
+
+        <!-- Opção B -->
+        <label class="quiz-option">
+          <input type="radio" name="pergunta3" class="correct-radio">
+          <span><strong>Opção B:</strong> Anotado em um caderno físico guardado em um local seguro em sua residência, longe do alcance de visitas ou de saídas de casa.</span>
+          <div class="feedback-correct">
+            🎉 <strong>Muito bem! Isso é excelente.</strong> Manter um caderninho físico em casa é seguro contra ataques virtuais ou em casos onde você perca seu telefone na rua. Lembre apenas de mantê-lo bem guardado.
+          </div>
+        </label>
+      </div>
+    </main>
+
+    <!-- ==========================================================================
+         CONTEÚDO DA ABA: AJUDA URGENTE
+         ========================================================================== -->
+    <main id="content-help" class="tab-content">
+      <div class="card" style="border-left: 6px solid #e11d48;">
+        <h2 class="card-title" style="color: #be123c;">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48
